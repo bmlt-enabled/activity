@@ -161,7 +161,7 @@
               {formatChangeType(change.change_type)}
             </Badge>
           </TableBodyCell>
-          <TableBodyCell class="font-medium">{change.meeting_name || '(deleted)'}</TableBodyCell>
+          <TableBodyCell class="font-medium" style="max-width: 300px; word-wrap: break-word; white-space: normal;">{change.meeting_name || '(deleted)'}</TableBodyCell>
           <TableBodyCell class="font-medium" style="color: #0066B3;">{change.service_body_name || 'N/A'}</TableBodyCell>
           <TableBodyCell>{change.change_id}</TableBodyCell>
         </TableBodyRow>

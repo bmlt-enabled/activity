@@ -23,17 +23,21 @@
   let localDaysPassed = $state(config.daysPassed);
 
   const serverOptions = $derived(
-    servers.map((server) => ({
-      value: server.url,
-      name: server.name
-    }))
+    [...servers]
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((server) => ({
+        value: server.url,
+        name: server.name
+      }))
   );
 
   const serviceBodyOptions = $derived(
-    serviceBodies.map((sb) => ({
-      value: sb.id,
-      name: `${sb.name} (${sb.type})`
-    }))
+    [...serviceBodies]
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((sb) => ({
+        value: sb.id,
+        name: `${sb.name} (${sb.type})`
+      }))
   );
 
   async function loadServers() {

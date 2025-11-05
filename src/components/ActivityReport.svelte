@@ -11,11 +11,12 @@
   import { getUsersFromChanges, getChangesByUser, flattenChanges, getChangeTypeStats, countActiveUsers, formatChangeType } from '../lib/utils/dataProcessing';
   import type { BmltChange, ChangeType } from '../lib/types';
 
-  let loading = $state(true);
+  let loading = $state(false);
   let error = $state<string | null>(null);
   let allChanges = $state<BmltChange[]>([]);
   let users = $state<string[]>([]);
   let configModalOpen = $state(false);
+  let isConfigured = $state(false);
 
   let searchTerm = $state('');
   let selectedType = $state<ChangeType>('');
@@ -59,6 +60,7 @@
       allChanges = flattenChanges(changesByUser);
 
       loading = false;
+      isConfigured = true;
     } catch (err) {
       error = err instanceof Error ? err.message : 'Failed to load activity data';
       loading = false;
@@ -71,7 +73,13 @@
   }
 
   onMount(() => {
-    loadData();
+    // Check if configuration exists
+    if (!config.bmltServer || config.serviceBodyIds.length === 0) {
+      configModalOpen = true;
+    } else {
+      isConfigured = true;
+      loadData();
+    }
   });
 </script>
 
@@ -94,7 +102,17 @@
         </div>
       </div>
 
-      {#if loading}
+      {#if !isConfigured && !loading}
+        <div class="flex flex-col items-center justify-center py-20 text-center">
+          <div class="mb-4 text-6xl">⚙️</div>
+          <h2 class="mb-2 text-2xl font-bold text-gray-700">Welcome to BMLT Activity Report</h2>
+          <p class="mb-6 text-gray-600">Please configure your server and service body settings to get started.</p>
+          <Button style="background-color: #0066B3;" class="text-white hover:opacity-90" onclick={() => (configModalOpen = true)}>
+            <CogOutline class="mr-2 h-5 w-5" />
+            Open Configuration
+          </Button>
+        </div>
+      {:else if loading}
         <div class="flex items-center justify-center py-20">
           <Spinner size="12" />
           <span class="ml-3 text-lg text-gray-600">Loading activity data...</span>
