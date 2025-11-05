@@ -87,15 +87,15 @@
   <div class="mx-auto max-w-7xl">
     <div class="overflow-hidden rounded-lg bg-white shadow-2xl">
       <!-- Header -->
-      <div class="px-8 py-6 text-white" style="background: linear-gradient(to right, #004080, #003366);">
-        <div class="flex items-center justify-between">
+      <div class="px-4 py-4 text-white sm:px-8 sm:py-6" style="background: linear-gradient(to right, #004080, #003366);">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 class="mb-2 text-3xl font-bold">BMLT Change Activity Report</h1>
-            <p class="text-lg opacity-90">
+            <h1 class="mb-1 text-2xl font-bold sm:mb-2 sm:text-3xl">BMLT User Activity Report</h1>
+            <p class="text-sm opacity-90 sm:text-lg">
               {config.serviceBodyIds.length} Service {config.serviceBodyIds.length === 1 ? 'Body' : 'Bodies'} - Last {config.daysPassed} Days
             </p>
           </div>
-          <Button color="light" size="sm" class="hover:bg-white/90" onclick={() => (configModalOpen = true)}>
+          <Button color="light" size="sm" class="w-full hover:bg-white/90 sm:w-auto" onclick={() => (configModalOpen = true)}>
             <CogOutline class="mr-2 h-4 w-4" />
             Configure
           </Button>
@@ -126,17 +126,17 @@
         </div>
       {:else}
         <!-- Stats Section -->
-        <div class="border-b border-gray-200 bg-gray-50 p-8">
+        <div class="border-b border-gray-200 bg-gray-50 p-4 sm:p-8">
           <Stats totalChanges={stats.totalChanges} activeUsers={stats.activeUsers} changeTypes={stats.changeTypes} />
         </div>
 
         <!-- Filters Section -->
-        <div class="border-b border-gray-200 bg-white p-8">
+        <div class="border-b border-gray-200 bg-white p-4 sm:p-8">
           <Filters bind:searchTerm bind:selectedType bind:selectedUser {users} />
         </div>
 
         <!-- Table Section -->
-        <div class="p-8">
+        <div class="p-4 sm:p-8">
           <ActivityTable changes={filteredChanges} />
         </div>
       {/if}

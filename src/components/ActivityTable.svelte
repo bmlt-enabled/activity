@@ -87,85 +87,124 @@
     <p class="text-lg">No changes found for the specified date range.</p>
   </div>
 {:else}
-  <Table hoverable={true} striped={true}>
-    <TableHead>
-      <TableHeadCell onclick={() => handleSort('date')} class="cursor-pointer">
-        <div class="flex items-center gap-2">
-          Date & Time
-          {#if sortColumn === 'date'}
-            {#if sortDirection === 'asc'}
-              <ChevronUpOutline size="sm" style="color: #0066B3;" />
-            {:else}
-              <ChevronDownOutline size="sm" style="color: #0066B3;" />
+  <!-- Desktop Table View -->
+  <div class="hidden md:block">
+    <Table hoverable={true} striped={true}>
+      <TableHead>
+        <TableHeadCell onclick={() => handleSort('date')} class="cursor-pointer">
+          <div class="flex items-center gap-2">
+            Date & Time
+            {#if sortColumn === 'date'}
+              {#if sortDirection === 'asc'}
+                <ChevronUpOutline size="sm" style="color: #0066B3;" />
+              {:else}
+                <ChevronDownOutline size="sm" style="color: #0066B3;" />
+              {/if}
             {/if}
-          {/if}
-        </div>
-      </TableHeadCell>
-      <TableHeadCell onclick={() => handleSort('user')} class="cursor-pointer">
-        <div class="flex items-center gap-2">
-          User
-          {#if sortColumn === 'user'}
-            {#if sortDirection === 'asc'}
-              <ChevronUpOutline size="sm" style="color: #0066B3;" />
-            {:else}
-              <ChevronDownOutline size="sm" style="color: #0066B3;" />
+          </div>
+        </TableHeadCell>
+        <TableHeadCell onclick={() => handleSort('user')} class="cursor-pointer">
+          <div class="flex items-center gap-2">
+            User
+            {#if sortColumn === 'user'}
+              {#if sortDirection === 'asc'}
+                <ChevronUpOutline size="sm" style="color: #0066B3;" />
+              {:else}
+                <ChevronDownOutline size="sm" style="color: #0066B3;" />
+              {/if}
             {/if}
-          {/if}
-        </div>
-      </TableHeadCell>
-      <TableHeadCell onclick={() => handleSort('type')} class="cursor-pointer">
-        <div class="flex items-center gap-2">
-          Change Type
-          {#if sortColumn === 'type'}
-            {#if sortDirection === 'asc'}
-              <ChevronUpOutline size="sm" style="color: #0066B3;" />
-            {:else}
-              <ChevronDownOutline size="sm" style="color: #0066B3;" />
+          </div>
+        </TableHeadCell>
+        <TableHeadCell onclick={() => handleSort('type')} class="cursor-pointer">
+          <div class="flex items-center gap-2">
+            Change Type
+            {#if sortColumn === 'type'}
+              {#if sortDirection === 'asc'}
+                <ChevronUpOutline size="sm" style="color: #0066B3;" />
+              {:else}
+                <ChevronDownOutline size="sm" style="color: #0066B3;" />
+              {/if}
             {/if}
-          {/if}
-        </div>
-      </TableHeadCell>
-      <TableHeadCell onclick={() => handleSort('meeting')} class="cursor-pointer">
-        <div class="flex items-center gap-2">
-          Meeting Name
-          {#if sortColumn === 'meeting'}
-            {#if sortDirection === 'asc'}
-              <ChevronUpOutline size="sm" style="color: #0066B3;" />
-            {:else}
-              <ChevronDownOutline size="sm" style="color: #0066B3;" />
+          </div>
+        </TableHeadCell>
+        <TableHeadCell onclick={() => handleSort('meeting')} class="cursor-pointer">
+          <div class="flex items-center gap-2">
+            Meeting Name
+            {#if sortColumn === 'meeting'}
+              {#if sortDirection === 'asc'}
+                <ChevronUpOutline size="sm" style="color: #0066B3;" />
+              {:else}
+                <ChevronDownOutline size="sm" style="color: #0066B3;" />
+              {/if}
             {/if}
-          {/if}
-        </div>
-      </TableHeadCell>
-      <TableHeadCell onclick={() => handleSort('service')} class="cursor-pointer">
-        <div class="flex items-center gap-2">
-          Service Body
-          {#if sortColumn === 'service'}
-            {#if sortDirection === 'asc'}
-              <ChevronUpOutline size="sm" style="color: #0066B3;" />
-            {:else}
-              <ChevronDownOutline size="sm" style="color: #0066B3;" />
+          </div>
+        </TableHeadCell>
+        <TableHeadCell onclick={() => handleSort('service')} class="cursor-pointer">
+          <div class="flex items-center gap-2">
+            Service Body
+            {#if sortColumn === 'service'}
+              {#if sortDirection === 'asc'}
+                <ChevronUpOutline size="sm" style="color: #0066B3;" />
+              {:else}
+                <ChevronDownOutline size="sm" style="color: #0066B3;" />
+              {/if}
             {/if}
-          {/if}
+          </div>
+        </TableHeadCell>
+        <TableHeadCell>Change ID</TableHeadCell>
+      </TableHead>
+      <TableBody>
+        {#each sortedChanges as change (change.change_id)}
+          <TableBodyRow>
+            <TableBodyCell class="text-sm text-gray-600">{change.date_string}</TableBodyCell>
+            <TableBodyCell>{change.user_name}</TableBodyCell>
+            <TableBodyCell>
+              <Badge color={getChangeTypeBadgeColor(change.change_type)} class="capitalize">
+                {formatChangeType(change.change_type)}
+              </Badge>
+            </TableBodyCell>
+            <TableBodyCell class="font-medium" style="max-width: 300px; word-wrap: break-word; white-space: normal;">{change.meeting_name || '(deleted)'}</TableBodyCell>
+            <TableBodyCell class="font-medium" style="color: #0066B3;">{change.service_body_name || 'N/A'}</TableBodyCell>
+            <TableBodyCell>{change.change_id}</TableBodyCell>
+          </TableBodyRow>
+        {/each}
+      </TableBody>
+    </Table>
+  </div>
+
+  <!-- Mobile Card View -->
+  <div class="space-y-4 md:hidden">
+    {#each sortedChanges as change (change.change_id)}
+      <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        <div class="mb-3 flex items-start justify-between">
+          <div class="font-semibold text-gray-900">{change.meeting_name || '(deleted)'}</div>
+          <Badge color={getChangeTypeBadgeColor(change.change_type)} class="ml-2 capitalize">
+            {formatChangeType(change.change_type)}
+          </Badge>
         </div>
-      </TableHeadCell>
-      <TableHeadCell>Change ID</TableHeadCell>
-    </TableHead>
-    <TableBody>
-      {#each sortedChanges as change (change.change_id)}
-        <TableBodyRow>
-          <TableBodyCell class="text-sm text-gray-600">{change.date_string}</TableBodyCell>
-          <TableBodyCell>{change.user_name}</TableBodyCell>
-          <TableBodyCell>
-            <Badge color={getChangeTypeBadgeColor(change.change_type)} class="capitalize">
-              {formatChangeType(change.change_type)}
-            </Badge>
-          </TableBodyCell>
-          <TableBodyCell class="font-medium" style="max-width: 300px; word-wrap: break-word; white-space: normal;">{change.meeting_name || '(deleted)'}</TableBodyCell>
-          <TableBodyCell class="font-medium" style="color: #0066B3;">{change.service_body_name || 'N/A'}</TableBodyCell>
-          <TableBodyCell>{change.change_id}</TableBodyCell>
-        </TableBodyRow>
-      {/each}
-    </TableBody>
-  </Table>
+
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between">
+            <span class="text-gray-500">User:</span>
+            <span class="font-medium text-gray-900">{change.user_name}</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="text-gray-500">Service Body:</span>
+            <span class="font-medium" style="color: #0066B3;">{change.service_body_name || 'N/A'}</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="text-gray-500">Date:</span>
+            <span class="text-gray-600">{change.date_string}</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="text-gray-500">Change ID:</span>
+            <span class="text-gray-600">{change.change_id}</span>
+          </div>
+        </div>
+      </div>
+    {/each}
+  </div>
 {/if}
