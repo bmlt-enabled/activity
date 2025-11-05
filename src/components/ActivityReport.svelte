@@ -90,7 +90,7 @@
       <div class="px-4 py-4 text-white sm:px-8 sm:py-6" style="background: linear-gradient(to right, #004080, #003366);">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 class="mb-1 text-2xl font-bold sm:mb-2 sm:text-3xl">BMLT User Activity Report</h1>
+            <h1 class="mb-1 text-2xl font-bold sm:mb-2 sm:text-3xl">BMLT Change Activity Report</h1>
             <p class="text-sm opacity-90 sm:text-lg">
               {config.serviceBodyIds.length} Service {config.serviceBodyIds.length === 1 ? 'Body' : 'Bodies'} - Last {config.daysPassed} Days
             </p>
