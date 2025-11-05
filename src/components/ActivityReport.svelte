@@ -82,7 +82,7 @@
       <div class="px-8 py-6 text-white" style="background: linear-gradient(to right, #004080, #003366);">
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="mb-2 text-3xl font-bold">BMLT User Activity Report</h1>
+            <h1 class="mb-2 text-3xl font-bold">BMLT Change Activity Report</h1>
             <p class="text-lg opacity-90">
               {config.serviceBodyIds.length} Service {config.serviceBodyIds.length === 1 ? 'Body' : 'Bodies'} - Last {config.daysPassed} Days
             </p>
