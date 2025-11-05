@@ -8,7 +8,7 @@
   import ConfigModal from './ConfigModal.svelte';
   import { config } from '../lib/stores/config.svelte';
   import { fetchBmltChanges } from '../lib/services/bmltApi';
-  import { getUsersFromChanges, getChangesByUser, flattenChanges, getChangeTypeStats, countActiveUsers, formatChangeType } from '../lib/utils/dataProcessing';
+  import { getUsersFromChanges, getChangesByUser, flattenChanges, getChangeTypeStats, countActiveUsers, formatChangeType, getMeetingName } from '../lib/utils/dataProcessing';
   import type { BmltChange, ChangeType } from '../lib/types';
 
   let loading = $state(false);
@@ -26,7 +26,7 @@
     return allChanges.filter((change) => {
       const matchesSearch =
         searchTerm === '' ||
-        change.meeting_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        getMeetingName(change).toLowerCase().includes(searchTerm.toLowerCase()) ||
         change.user_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         formatChangeType(change.change_type).toLowerCase().includes(searchTerm.toLowerCase()) ||
         change.service_body_name?.toLowerCase().includes(searchTerm.toLowerCase());

@@ -6,6 +6,7 @@ export interface BmltChange {
   change_type: string;
   meeting_name?: string;
   service_body_name?: string;
+  json_data?: string | { before?: { meeting_name?: string }; after?: { meeting_name?: string } };
 }
 
 export interface Config {

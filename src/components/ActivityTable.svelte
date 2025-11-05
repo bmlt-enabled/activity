@@ -2,7 +2,7 @@
   import { Table, TableHead, TableHeadCell, TableBody, TableBodyRow, TableBodyCell, Badge } from 'flowbite-svelte';
   import { ChevronUpOutline, ChevronDownOutline } from 'flowbite-svelte-icons';
   import type { BmltChange } from '../lib/types';
-  import { formatChangeType } from '../lib/utils/dataProcessing';
+  import { formatChangeType, getMeetingName } from '../lib/utils/dataProcessing';
 
   interface Props {
     changes: BmltChange[];
@@ -37,8 +37,8 @@
           bVal = formatChangeType(b.change_type);
           break;
         case 'meeting':
-          aVal = (a.meeting_name || '').toLowerCase();
-          bVal = (b.meeting_name || '').toLowerCase();
+          aVal = getMeetingName(a).toLowerCase();
+          bVal = getMeetingName(b).toLowerCase();
           break;
         case 'service':
           aVal = (a.service_body_name || '').toLowerCase();
@@ -163,7 +163,7 @@
                 {formatChangeType(change.change_type)}
               </Badge>
             </TableBodyCell>
-            <TableBodyCell class="font-medium" style="max-width: 300px; word-wrap: break-word; white-space: normal;">{change.meeting_name || '(deleted)'}</TableBodyCell>
+            <TableBodyCell class="font-medium" style="max-width: 300px; word-wrap: break-word; white-space: normal;">{getMeetingName(change)}</TableBodyCell>
             <TableBodyCell class="font-medium" style="color: #0066B3;">{change.service_body_name || 'N/A'}</TableBodyCell>
             <TableBodyCell>{change.change_id}</TableBodyCell>
           </TableBodyRow>
@@ -177,7 +177,7 @@
     {#each sortedChanges as change (change.change_id)}
       <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <div class="mb-3 flex items-start justify-between">
-          <div class="font-semibold text-gray-900">{change.meeting_name || '(deleted)'}</div>
+          <div class="font-semibold text-gray-900">{getMeetingName(change)}</div>
           <Badge color={getChangeTypeBadgeColor(change.change_type)} class="ml-2 capitalize">
             {formatChangeType(change.change_type)}
           </Badge>

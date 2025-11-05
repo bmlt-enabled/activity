@@ -61,3 +61,39 @@ export function getChangeTypeStats(changes: BmltChange[]): ChangeTypeStats {
 export function countActiveUsers(changesByUser: ChangesByUser): number {
   return Object.values(changesByUser).filter((changes) => changes.length > 0).length;
 }
+
+export function getMeetingName(change: BmltChange): string {
+  // If meeting_name is set and not empty, use it
+  if (change.meeting_name && change.meeting_name.trim() !== '') {
+    return change.meeting_name;
+  }
+
+  // Try to extract from json_data
+  if (change.json_data) {
+    try {
+      let jsonData;
+
+      // Handle both string and object types
+      if (typeof change.json_data === 'string') {
+        jsonData = JSON.parse(change.json_data);
+      } else {
+        jsonData = change.json_data;
+      }
+
+      // Try 'before' object first
+      if (jsonData.before?.meeting_name) {
+        return jsonData.before.meeting_name;
+      }
+
+      // Try 'after' object
+      if (jsonData.after?.meeting_name) {
+        return jsonData.after.meeting_name;
+      }
+    } catch (error) {
+      console.error('Failed to parse json_data:', error);
+    }
+  }
+
+  // Fallback
+  return '(deleted)';
+}
