@@ -18,6 +18,9 @@ export function formatDetailsAsList(details: string | null | undefined): string[
   // Remove the weird #@-@# from custom fields
   formattedDetails = formattedDetails.replace(/#@-@#/g, ' ');
 
+  // Protect URLs by replacing . with ~DOT~
+  formattedDetails = formattedDetails.replace(/(https?:\/\/[^\s"]+)/g, (url) => url.replace(/\./g, '~DOT~'));
+
   // Protect email addresses by replacing . with ~DOT~
   formattedDetails = formattedDetails.replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6})/g, (email) => email.replace(/\./g, '~DOT~'));
 
