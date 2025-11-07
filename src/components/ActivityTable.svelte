@@ -4,6 +4,7 @@
   import type { BmltChange } from '../lib/types';
   import { formatChangeType, getMeetingName } from '../lib/utils/dataProcessing';
   import { generateDiff } from '../lib/utils/diff';
+  import { formatDetailsAsList } from '../lib/utils/detailsFormatter';
 
   interface Props {
     changes: BmltChange[];
@@ -269,10 +270,19 @@
 
       <!-- Details -->
       {#if selectedChange.details}
+        {@const detailItems = formatDetailsAsList(selectedChange.details)}
         <div>
           <h3 class="mb-2 text-lg font-semibold text-gray-900">Change Summary</h3>
           <div class="rounded-lg border border-gray-200 bg-white p-4 text-sm">
-            {selectedChange.details}
+            {#if detailItems.length > 0}
+              <ul class="list-disc space-y-1 pl-5">
+                {#each detailItems as item, i (i)}
+                  <li>{item}</li>
+                {/each}
+              </ul>
+            {:else}
+              <p class="text-gray-500">No details available</p>
+            {/if}
           </div>
         </div>
       {/if}
