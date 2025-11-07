@@ -34,4 +34,11 @@ jobs:
 
       - name: make test-js 🧪
         run: |
-          npm run test
+          npm run coverage
+
+      - name: upload coverage 📊
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/coverage-final.json
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: bmlt-enabled/activity
