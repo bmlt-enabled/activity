@@ -1,6 +1,7 @@
 <script lang="ts">
+  import { SvelteSet } from 'svelte/reactivity';
   import { onMount } from 'svelte';
-  import { Button, Modal, Label, Input, Select, MultiSelect, Spinner, Alert } from 'flowbite-svelte';
+  import { Button, Modal, Label, Input, Select, MultiSelect, Spinner, Alert, Badge } from 'flowbite-svelte';
   import { config } from '../lib/stores/config.svelte';
   import { fetchServerList, fetchServiceBodies } from '../lib/services/serverList';
   import type { BmltServer, ServiceBody } from '../lib/types';
@@ -22,6 +23,89 @@
   let localServiceBodyIds = $state<string[]>([...config.serviceBodyIds]);
   let localDaysPassed = $state(config.daysPassed);
 
+  const SERVICE_BODY_TYPE_GROUPS = [
+    { type: 'ZF', name: 'Zonal Forum', color: 'purple' },
+    { type: 'RS', name: 'Regional Service', color: 'blue' },
+    { type: 'AS', name: 'Area Service', color: 'green' },
+    { type: 'MA', name: 'Metro Area', color: 'cyan' },
+    { type: 'GR', name: 'Group', color: 'yellow' }
+  ];
+
+  type BadgeColor =
+    | 'green'
+    | 'red'
+    | 'blue'
+    | 'purple'
+    | 'yellow'
+    | 'gray'
+    | 'primary'
+    | 'secondary'
+    | 'emerald'
+    | 'orange'
+    | 'teal'
+    | 'cyan'
+    | 'sky'
+    | 'indigo'
+    | 'lime'
+    | 'amber'
+    | 'violet'
+    | 'fuchsia'
+    | 'pink'
+    | 'rose';
+
+  function createGroupedServiceBodyItems(bodies: ServiceBody[]) {
+    const bodiesByType = bodies.reduce(
+      (groups, body) => {
+        (groups[body.type] ??= []).push(body);
+        return groups;
+      },
+      {} as Record<string, ServiceBody[]>
+    );
+
+    const createGroupHeader = (type: string, name: string, color: string) => ({
+      value: `_group_${type}_`,
+      name: `━━━ ${name.toUpperCase()} (${type}) ━━━`,
+      disabled: true,
+      class: `group-header group-header-${color}`
+    });
+
+    const bodyItem = (body: ServiceBody) => ({
+      value: body.id,
+      name: `  ${body.name} (${body.type})`,
+      type: body.type
+    });
+
+    const sortAlphabetically = (items: any[]) => items.sort((a, b) => a.name.localeCompare(b.name));
+
+    const knownGroupItems = SERVICE_BODY_TYPE_GROUPS.map((group) => {
+      const bodiesInGroup = bodiesByType[group.type];
+      if (!bodiesInGroup?.length) return null;
+      const header = createGroupHeader(group.type, group.name, group.color);
+      const items = sortAlphabetically(bodiesInGroup.map(bodyItem));
+      return [header, ...items];
+    })
+      .filter(Boolean)
+      .flat();
+
+    const knownTypes = new SvelteSet(SERVICE_BODY_TYPE_GROUPS.map((g) => g.type));
+    const unknownTypes = Object.keys(bodiesByType).filter((type) => !knownTypes.has(type));
+
+    const otherGroupItems =
+      unknownTypes.length > 0
+        ? [createGroupHeader('other', 'Other', 'gray'), ...sortAlphabetically(unknownTypes.flatMap((type) => bodiesByType[type]).map((body) => bodyItem({ ...body, type: body.type || 'Other' })))]
+        : [];
+
+    return [...knownGroupItems, ...otherGroupItems];
+  }
+
+  function getBadgeColor(bodyId: string, bodyLookup: Record<string, ServiceBody>): BadgeColor {
+    const body = bodyLookup[bodyId];
+    if (!body) return 'gray';
+
+    const group = SERVICE_BODY_TYPE_GROUPS.find((g) => g.type === body.type);
+    return (group?.color ?? 'gray') as BadgeColor;
+  }
+
   const serverOptions = $derived(
     [...servers]
       .sort((a, b) => a.name.localeCompare(b.name))
@@ -31,14 +115,9 @@
       }))
   );
 
-  const serviceBodyOptions = $derived(
-    [...serviceBodies]
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map((sb) => ({
-        value: sb.id,
-        name: `${sb.name} (${sb.type})`
-      }))
-  );
+  const serviceBodyOptions = $derived(createGroupedServiceBodyItems(serviceBodies));
+
+  const serviceBodyLookup = $derived(Object.fromEntries(serviceBodies.map((sb) => [sb.id, sb])));
 
   async function loadServers() {
     try {
@@ -137,7 +216,20 @@
               <span class="text-sm text-gray-600">Loading service bodies...</span>
             </div>
           {:else if serviceBodies.length > 0}
-            <MultiSelect id="service-bodies" items={serviceBodyOptions} bind:value={localServiceBodyIds} placeholder="Select service bodies..." required />
+            <MultiSelect
+              id="service-bodies"
+              items={serviceBodyOptions}
+              bind:value={localServiceBodyIds}
+              placeholder="Select service bodies..."
+              class="hide-close-button bg-gray-50 dark:bg-gray-600"
+              required
+            >
+              {#snippet children({ item, clear })}
+                <Badge rounded color={getBadgeColor(String(item.value), serviceBodyLookup)} dismissable params={{ duration: 100 }} onclose={clear}>
+                  {item.name}
+                </Badge>
+              {/snippet}
+            </MultiSelect>
             <p class="mt-1 text-sm text-gray-500">Select one or more service bodies to track ({localServiceBodyIds.length} selected)</p>
           {:else}
             <Alert color="yellow">
@@ -160,3 +252,89 @@
     </form>
   {/if}
 </Modal>
+
+<style>
+  :global(#service-bodies div[class*='opacity-50']) {
+    font-weight: bold !important;
+    font-size: 0.925rem !important;
+    background-color: rgb(243, 244, 246) !important; /* gray-100 */
+    color: rgb(31, 41, 55) !important; /* gray-800 */
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(#service-bodies div[class*='opacity-50']) {
+      background-color: rgb(17, 24, 39) !important; /* gray-900 */
+      color: rgb(209, 213, 219) !important; /* gray-300 */
+    }
+  }
+
+  :global(.group-header) {
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.05em !important;
+    padding: 0.5rem 0.75rem !important;
+    margin: 0.25rem 0 !important;
+    cursor: default !important;
+    pointer-events: none !important;
+  }
+
+  :global(.group-header-purple) {
+    background-color: rgb(233 213 255) !important;
+    color: rgb(107 33 168) !important;
+  }
+
+  :global(.group-header-blue) {
+    background-color: rgb(219 234 254) !important;
+    color: rgb(29 78 216) !important;
+  }
+
+  :global(.group-header-green) {
+    background-color: rgb(220 252 231) !important;
+    color: rgb(21 128 61) !important;
+  }
+
+  :global(.group-header-cyan) {
+    background-color: rgb(207 250 254) !important;
+    color: rgb(14 116 144) !important;
+  }
+
+  :global(.group-header-yellow) {
+    background-color: rgb(254 249 195) !important;
+    color: rgb(161 98 7) !important;
+  }
+
+  :global(.group-header-gray) {
+    background-color: rgb(243 244 246) !important;
+    color: rgb(75 85 99) !important;
+  }
+
+  :global(.dark .group-header-purple) {
+    background-color: rgb(88 28 135) !important;
+    color: rgb(243 232 255) !important;
+  }
+
+  :global(.dark .group-header-blue) {
+    background-color: rgb(30 64 175) !important;
+    color: rgb(219 234 254) !important;
+  }
+
+  :global(.dark .group-header-green) {
+    background-color: rgb(22 101 52) !important;
+    color: rgb(220 252 231) !important;
+  }
+
+  :global(.dark .group-header-cyan) {
+    background-color: rgb(14 116 144) !important;
+    color: rgb(207 250 254) !important;
+  }
+
+  :global(.dark .group-header-yellow) {
+    background-color: rgb(161 98 7) !important;
+    color: rgb(254 249 195) !important;
+  }
+
+  :global(.dark .group-header-gray) {
+    background-color: rgb(55 65 81) !important;
+    color: rgb(229 231 235) !important;
+  }
+</style>
