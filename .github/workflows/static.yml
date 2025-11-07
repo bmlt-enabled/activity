@@ -41,6 +41,15 @@ jobs:
         run: |
           npm ci
           npm run build
+      - name: run test and coverage 🧪
+        run: |
+          npm run coverage
+      - name: upload coverage 📊
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/coverage-final.json
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: bmlt-enabled/activity
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
