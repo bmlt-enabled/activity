@@ -12,7 +12,7 @@ describe('config store', () => {
 
     expect(config.bmltServer).toBe('');
     expect(config.serviceBodyIds).toEqual([]);
-    expect(config.daysPassed).toBe(180);
+    expect(config.daysPassed).toBe(30);
     expect(config.timezone).toBe('America/New_York');
   });
 
@@ -92,7 +92,7 @@ describe('config store', () => {
     const { config } = await import('../lib/stores/config.svelte');
 
     expect(config.bmltServer).toBe('');
-    expect(config.daysPassed).toBe(180);
+    expect(config.daysPassed).toBe(30);
     expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to load config from localStorage:', expect.any(SyntaxError));
 
     consoleErrorSpy.mockRestore();
