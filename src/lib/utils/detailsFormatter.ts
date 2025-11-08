@@ -28,6 +28,10 @@ export function formatDetailsAsList(details: string | null | undefined): string[
   // Pattern: from "123. or from "-123. or to "123. or to "-123.
   formattedDetails = formattedDetails.replace(/(from|to) "(-?[0-9]+)\./g, (match) => match.replace(/\./g, '~DOT~'));
 
+  // Protect periods within quoted strings (e.g., from "text." or to "text.")
+  // This prevents splitting on periods that are part of the actual value being changed
+  formattedDetails = formattedDetails.replace(/"([^"]*\.[^"]*)"/g, (match) => match.replace(/\./g, '~DOT~'));
+
   // Split on periods (which will create our list items)
   const items = formattedDetails
     .split('.')

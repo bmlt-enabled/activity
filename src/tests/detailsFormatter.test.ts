@@ -122,5 +122,25 @@ describe('detailsFormatter utility', () => {
       expect(result[0]).toContain('old@test.com');
       expect(result[0]).toContain('new@example.org');
     });
+
+    test('preserves periods within quoted strings', () => {
+      const details =
+        'Additional Location Information was changed from "Private dinning room in rear of cafeteria / Free parking pass validated at front desk." to "Private dining room in rear of cafeteria / Free parking pass validated at front desk."';
+      const result = formatDetailsAsList(details);
+
+      // Should be a single item since the periods are within quotes
+      expect(result).toHaveLength(1);
+      expect(result[0]).toContain('Private dinning room in rear of cafeteria / Free parking pass validated at front desk.');
+      expect(result[0]).toContain('Private dining room in rear of cafeteria / Free parking pass validated at front desk.');
+    });
+
+    test('handles multiple sentences with periods in quotes', () => {
+      const details = 'Field was changed from "First. Second." to "Third. Fourth.". Another change made';
+      const result = formatDetailsAsList(details);
+
+      expect(result).toHaveLength(2);
+      expect(result[0]).toContain('Field was changed from "First. Second." to "Third. Fourth."');
+      expect(result[1]).toEqual('Another change made');
+    });
   });
 });
