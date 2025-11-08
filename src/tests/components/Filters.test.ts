@@ -49,7 +49,7 @@ describe('Filters component', () => {
     expect(options).toContain('All Types');
     expect(options).toContain('Changes');
     expect(options).toContain('New');
-    expect(options).toContain('Deleted');
+    expect(options).toContain('Delete');
     expect(options).toContain('Rollback');
   });
 

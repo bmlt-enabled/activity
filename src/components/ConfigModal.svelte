@@ -5,6 +5,7 @@
   import { config } from '../lib/stores/config.svelte';
   import { fetchServerList, fetchServiceBodies } from '../lib/services/serverList';
   import type { BmltServer, ServiceBody } from '../lib/types';
+  import { translations } from '../lib/stores/localization';
 
   interface Props {
     open: boolean;
@@ -131,7 +132,7 @@
         await loadServiceBodies(localServer);
       }
     } catch (err) {
-      error = err instanceof Error ? err.message : 'Failed to load servers';
+      error = err instanceof Error ? err.message : $translations.failedToLoadServers;
       loadingServers = false;
     }
   }
@@ -143,7 +144,7 @@
       serviceBodies = await fetchServiceBodies(serverUrl);
       loadingServiceBodies = false;
     } catch (err) {
-      error = err instanceof Error ? err.message : 'Failed to load service bodies';
+      error = err instanceof Error ? err.message : $translations.failedToLoadServiceBodies;
       loadingServiceBodies = false;
     }
   }
@@ -157,7 +158,7 @@
 
   function handleSubmit() {
     if (localServiceBodyIds.length === 0) {
-      error = 'Please select at least one service body';
+      error = $translations.pleaseSelectAtLeastOneServiceBody;
       return;
     }
 
@@ -180,11 +181,11 @@
   });
 </script>
 
-<Modal bind:open title="Configuration" autoclose={false} outsideclose size="lg">
+<Modal bind:open title={$translations.configuration} autoclose={false} outsideclose size="lg">
   {#if loadingServers}
     <div class="flex items-center justify-center py-12">
       <Spinner size="8" />
-      <span class="ml-3 text-gray-600">Loading servers...</span>
+      <span class="ml-3 text-gray-600">{$translations.loadingServers}</span>
     </div>
   {:else}
     <form
@@ -196,31 +197,31 @@
     >
       {#if error}
         <Alert color="red" class="mb-4">
-          <span class="font-medium">Error:</span>
+          <span class="font-medium">{$translations.error}:</span>
           {error}
         </Alert>
       {/if}
 
       <div>
-        <Label for="bmlt-server" class="mb-2">BMLT Server</Label>
-        <Select id="bmlt-server" items={serverOptions} bind:value={localServer} placeholder="Select a server..." onchange={handleServerChange} required />
-        <p class="mt-1 text-sm text-gray-500">Select the BMLT root server to query</p>
+        <Label for="bmlt-server" class="mb-2">{$translations.bmltServer}</Label>
+        <Select id="bmlt-server" items={serverOptions} bind:value={localServer} placeholder={$translations.selectAServer} onchange={handleServerChange} required />
+        <p class="mt-1 text-sm text-gray-500">{$translations.selectServerToQuery}</p>
       </div>
 
       {#if localServer}
         <div>
-          <Label for="service-bodies" class="mb-2">Service Bodies</Label>
+          <Label for="service-bodies" class="mb-2">{$translations.serviceBodies}</Label>
           {#if loadingServiceBodies}
             <div class="flex items-center gap-2 rounded-lg border border-gray-300 p-4">
               <Spinner size="4" />
-              <span class="text-sm text-gray-600">Loading service bodies...</span>
+              <span class="text-sm text-gray-600">{$translations.loadingServiceBodies}</span>
             </div>
           {:else if serviceBodies.length > 0}
             <MultiSelect
               id="service-bodies"
               items={serviceBodyOptions}
               bind:value={localServiceBodyIds}
-              placeholder="Select service bodies..."
+              placeholder={$translations.selectServiceBodiesPlaceholder}
               class="hide-close-button bg-gray-50 dark:bg-gray-600"
               required
             >
@@ -230,24 +231,26 @@
                 </Badge>
               {/snippet}
             </MultiSelect>
-            <p class="mt-1 text-sm text-gray-500">Select one or more service bodies to track ({localServiceBodyIds.length} selected)</p>
+            <p class="mt-1 text-sm text-gray-500">{$translations.selectServiceBodies} ({localServiceBodyIds.length} {$translations.selected})</p>
           {:else}
             <Alert color="yellow">
-              <span class="text-sm">No service bodies found for this server</span>
+              <span class="text-sm">{$translations.noServiceBodiesFound}</span>
             </Alert>
           {/if}
         </div>
       {/if}
 
       <div>
-        <Label for="days-passed" class="mb-2">Days to Look Back</Label>
+        <Label for="days-passed" class="mb-2">{$translations.daysToLookBack}</Label>
         <Input id="days-passed" type="number" bind:value={localDaysPassed} min="1" max="365" required />
-        <p class="mt-1 text-sm text-gray-500">Number of days of history to fetch (1-365)</p>
+        <p class="mt-1 text-sm text-gray-500">{$translations.numberOfDaysToFetch}</p>
       </div>
 
       <div class="flex justify-end gap-3">
-        <Button color="alternative" onclick={handleCancel}>Cancel</Button>
-        <Button type="submit" style="background-color: #0066B3;" class="text-white hover:opacity-90" disabled={localServiceBodyIds.length === 0}>Apply & Reload</Button>
+        <Button color="alternative" onclick={handleCancel}>{$translations.cancel}</Button>
+        <Button type="submit" class="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600" disabled={localServiceBodyIds.length === 0}
+          >{$translations.applyAndReload}</Button
+        >
       </div>
     </form>
   {/if}

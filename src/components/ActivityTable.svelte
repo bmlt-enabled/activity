@@ -5,6 +5,7 @@
   import { formatChangeType, getMeetingName } from '../lib/utils/dataProcessing';
   import { generateDiff } from '../lib/utils/diff';
   import { formatDetailsAsList } from '../lib/utils/detailsFormatter';
+  import { translations } from '../lib/stores/localization';
 
   interface Props {
     changes: BmltChange[];
@@ -107,7 +108,7 @@
 
 {#if sortedChanges.length === 0}
   <div class="py-16 text-center text-gray-500">
-    <p class="text-lg">No changes found for the specified date range.</p>
+    <p class="text-lg">{$translations.noChangesFound}</p>
   </div>
 {:else}
   <!-- Desktop Table View -->
@@ -116,78 +117,78 @@
       <TableHead>
         <TableHeadCell onclick={() => handleSort('date')} class="cursor-pointer">
           <div class="flex items-center gap-2">
-            Date & Time
+            {$translations.dateAndTime}
             {#if sortColumn === 'date'}
               {#if sortDirection === 'asc'}
-                <ChevronUpOutline size="sm" style="color: #0066B3;" />
+                <ChevronUpOutline size="sm" class="text-blue-600 dark:text-blue-400" />
               {:else}
-                <ChevronDownOutline size="sm" style="color: #0066B3;" />
+                <ChevronDownOutline size="sm" class="text-blue-600 dark:text-blue-400" />
               {/if}
             {/if}
           </div>
         </TableHeadCell>
         <TableHeadCell onclick={() => handleSort('user')} class="cursor-pointer">
           <div class="flex items-center gap-2">
-            User
+            {$translations.user}
             {#if sortColumn === 'user'}
               {#if sortDirection === 'asc'}
-                <ChevronUpOutline size="sm" style="color: #0066B3;" />
+                <ChevronUpOutline size="sm" class="text-blue-600 dark:text-blue-400" />
               {:else}
-                <ChevronDownOutline size="sm" style="color: #0066B3;" />
+                <ChevronDownOutline size="sm" class="text-blue-600 dark:text-blue-400" />
               {/if}
             {/if}
           </div>
         </TableHeadCell>
         <TableHeadCell onclick={() => handleSort('type')} class="cursor-pointer">
           <div class="flex items-center gap-2">
-            Change Type
+            {$translations.changeType}
             {#if sortColumn === 'type'}
               {#if sortDirection === 'asc'}
-                <ChevronUpOutline size="sm" style="color: #0066B3;" />
+                <ChevronUpOutline size="sm" class="text-blue-600 dark:text-blue-400" />
               {:else}
-                <ChevronDownOutline size="sm" style="color: #0066B3;" />
+                <ChevronDownOutline size="sm" class="text-blue-600 dark:text-blue-400" />
               {/if}
             {/if}
           </div>
         </TableHeadCell>
         <TableHeadCell onclick={() => handleSort('meeting')} class="cursor-pointer">
           <div class="flex items-center gap-2">
-            Meeting Name
+            {$translations.meetingName}
             {#if sortColumn === 'meeting'}
               {#if sortDirection === 'asc'}
-                <ChevronUpOutline size="sm" style="color: #0066B3;" />
+                <ChevronUpOutline size="sm" class="text-blue-600 dark:text-blue-400" />
               {:else}
-                <ChevronDownOutline size="sm" style="color: #0066B3;" />
+                <ChevronDownOutline size="sm" class="text-blue-600 dark:text-blue-400" />
               {/if}
             {/if}
           </div>
         </TableHeadCell>
         <TableHeadCell onclick={() => handleSort('service')} class="cursor-pointer">
           <div class="flex items-center gap-2">
-            Service Body
+            {$translations.serviceBody}
             {#if sortColumn === 'service'}
               {#if sortDirection === 'asc'}
-                <ChevronUpOutline size="sm" style="color: #0066B3;" />
+                <ChevronUpOutline size="sm" class="text-blue-600 dark:text-blue-400" />
               {:else}
-                <ChevronDownOutline size="sm" style="color: #0066B3;" />
+                <ChevronDownOutline size="sm" class="text-blue-600 dark:text-blue-400" />
               {/if}
             {/if}
           </div>
         </TableHeadCell>
-        <TableHeadCell>Change ID</TableHeadCell>
+        <TableHeadCell>{$translations.changeID}</TableHeadCell>
       </TableHead>
       <TableBody>
         {#each sortedChanges as change (change.change_id)}
           <TableBodyRow class="cursor-pointer" onclick={() => handleRowClick(change)}>
-            <TableBodyCell class="text-sm text-gray-600">{change.date_string}</TableBodyCell>
-            <TableBodyCell>{change.user_name}</TableBodyCell>
+            <TableBodyCell class="text-sm text-gray-600 dark:text-gray-400">{change.date_string}</TableBodyCell>
+            <TableBodyCell class="dark:text-gray-100">{change.user_name}</TableBodyCell>
             <TableBodyCell>
               <Badge color={getChangeTypeBadgeColor(change.change_type)} class="capitalize">
                 {formatChangeType(change.change_type)}
               </Badge>
             </TableBodyCell>
             <TableBodyCell class="font-medium" style="max-width: 300px; word-wrap: break-word; white-space: normal;">{getMeetingName(change)}</TableBodyCell>
-            <TableBodyCell class="font-medium" style="color: #0066B3;">{change.service_body_name || 'N/A'}</TableBodyCell>
+            <TableBodyCell class="font-medium text-blue-600 dark:text-blue-400">{change.service_body_name || 'N/A'}</TableBodyCell>
             <TableBodyCell>{change.change_id}</TableBodyCell>
           </TableBodyRow>
         {/each}
@@ -198,9 +199,13 @@
   <!-- Mobile Card View -->
   <div class="space-y-4 md:hidden">
     {#each sortedChanges as change (change.change_id)}
-      <button type="button" class="w-full cursor-pointer rounded-lg border border-gray-200 bg-white p-4 text-left shadow-sm hover:shadow-md" onclick={() => handleRowClick(change)}>
+      <button
+        type="button"
+        class="w-full cursor-pointer rounded-lg border border-gray-200 bg-white p-4 text-left shadow-sm hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
+        onclick={() => handleRowClick(change)}
+      >
         <div class="mb-3 flex items-start justify-between">
-          <div class="font-semibold text-gray-900">{getMeetingName(change)}</div>
+          <div class="font-semibold text-gray-900 dark:text-gray-100">{getMeetingName(change)}</div>
           <Badge color={getChangeTypeBadgeColor(change.change_type)} class="ml-2 capitalize">
             {formatChangeType(change.change_type)}
           </Badge>
@@ -208,23 +213,23 @@
 
         <div class="space-y-2 text-sm">
           <div class="flex justify-between">
-            <span class="text-gray-500">User:</span>
-            <span class="font-medium text-gray-900">{change.user_name}</span>
+            <span class="text-gray-500 dark:text-gray-400">{$translations.user}:</span>
+            <span class="font-medium text-gray-900 dark:text-gray-100">{change.user_name}</span>
           </div>
 
           <div class="flex justify-between">
-            <span class="text-gray-500">Service Body:</span>
-            <span class="font-medium" style="color: #0066B3;">{change.service_body_name || 'N/A'}</span>
+            <span class="text-gray-500 dark:text-gray-400">{$translations.serviceBody}:</span>
+            <span class="font-medium text-blue-600 dark:text-blue-400">{change.service_body_name || 'N/A'}</span>
           </div>
 
           <div class="flex justify-between">
-            <span class="text-gray-500">Date:</span>
-            <span class="text-gray-600">{change.date_string}</span>
+            <span class="text-gray-500 dark:text-gray-400">{$translations.date}:</span>
+            <span class="text-gray-600 dark:text-gray-300">{change.date_string}</span>
           </div>
 
           <div class="flex justify-between">
-            <span class="text-gray-500">Change ID:</span>
-            <span class="text-gray-600">{change.change_id}</span>
+            <span class="text-gray-500 dark:text-gray-400">{$translations.changeID}:</span>
+            <span class="text-gray-600 dark:text-gray-300">{change.change_id}</span>
           </div>
         </div>
       </button>
@@ -234,36 +239,36 @@
 
 <!-- Change Details Modal -->
 {#if selectedChange}
-  <Modal bind:open={showModal} title="Change Details" size="lg">
+  <Modal bind:open={showModal} title={$translations.changeDetails} size="lg">
     <div class="space-y-4">
       <!-- Change Info -->
-      <div class="rounded-lg bg-gray-50 p-4">
+      <div class="rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
         <div class="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span class="font-medium text-gray-700">Meeting:</span>
-            <span class="ml-2">{getMeetingName(selectedChange)}</span>
+            <span class="font-medium text-gray-700 dark:text-gray-300">{$translations.meeting}:</span>
+            <span class="ml-2 dark:text-gray-100">{getMeetingName(selectedChange)}</span>
           </div>
           <div>
-            <span class="font-medium text-gray-700">Change Type:</span>
+            <span class="font-medium text-gray-700 dark:text-gray-300">{$translations.changeType}:</span>
             <Badge color={getChangeTypeBadgeColor(selectedChange.change_type)} class="ml-2 capitalize">
               {formatChangeType(selectedChange.change_type)}
             </Badge>
           </div>
           <div>
-            <span class="font-medium text-gray-700">User:</span>
-            <span class="ml-2">{selectedChange.user_name}</span>
+            <span class="font-medium text-gray-700 dark:text-gray-300">{$translations.user}:</span>
+            <span class="ml-2 dark:text-gray-100">{selectedChange.user_name}</span>
           </div>
           <div>
-            <span class="font-medium text-gray-700">Date:</span>
-            <span class="ml-2">{selectedChange.date_string}</span>
+            <span class="font-medium text-gray-700 dark:text-gray-300">{$translations.date}:</span>
+            <span class="ml-2 dark:text-gray-100">{selectedChange.date_string}</span>
           </div>
           <div>
-            <span class="font-medium text-gray-700">Service Body:</span>
-            <span class="ml-2" style="color: #0066B3;">{selectedChange.service_body_name || 'N/A'}</span>
+            <span class="font-medium text-gray-700 dark:text-gray-300">{$translations.serviceBody}:</span>
+            <span class="ml-2 text-blue-600 dark:text-blue-400">{selectedChange.service_body_name || 'N/A'}</span>
           </div>
           <div>
-            <span class="font-medium text-gray-700">Change ID:</span>
-            <span class="ml-2">{selectedChange.change_id}</span>
+            <span class="font-medium text-gray-700 dark:text-gray-300">{$translations.changeID}:</span>
+            <span class="ml-2 dark:text-gray-100">{selectedChange.change_id}</span>
           </div>
         </div>
       </div>
@@ -272,8 +277,8 @@
       {#if selectedChange.details}
         {@const detailItems = formatDetailsAsList(selectedChange.details)}
         <div>
-          <h3 class="mb-2 text-lg font-semibold text-gray-900">Change Summary</h3>
-          <div class="rounded-lg border border-gray-200 bg-white p-4 text-sm">
+          <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100">{$translations.changeSummary}</h3>
+          <div class="rounded-lg border border-gray-200 bg-white p-4 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100">
             {#if detailItems.length > 0}
               <ul class="list-disc space-y-1 pl-5">
                 {#each detailItems as item, i (i)}
@@ -281,7 +286,7 @@
                 {/each}
               </ul>
             {:else}
-              <p class="text-gray-500">No details available</p>
+              <p class="text-gray-500 dark:text-gray-400">{$translations.noDetailsAvailable}</p>
             {/if}
           </div>
         </div>
@@ -292,10 +297,14 @@
         {#if changeData.before && changeData.after}
           <!-- Unified Diff View -->
           <div>
-            <h3 class="mb-2 text-lg font-semibold text-gray-900">Changes</h3>
-            <div class="max-h-96 overflow-auto rounded-lg border border-gray-200 bg-gray-50 p-4">
+            <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100">{$translations.changes}</h3>
+            <div class="max-h-96 overflow-auto rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900">
               <pre class="font-mono text-xs">{#each generateDiff(changeData.before, changeData.after) as line, i (i)}<span
-                    class="{line.type === 'added' ? 'bg-green-100 text-green-800' : line.type === 'removed' ? 'bg-red-100 text-red-800' : 'text-gray-700'} block">{line.fullLine}</span
+                    class="{line.type === 'added'
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                      : line.type === 'removed'
+                        ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                        : 'text-gray-700 dark:text-gray-300'} block">{line.fullLine}</span
                   >{/each}</pre>
             </div>
           </div>
@@ -304,29 +313,29 @@
           <div class="grid gap-4 md:grid-cols-2">
             {#if changeData.before}
               <div>
-                <h3 class="mb-2 text-lg font-semibold text-gray-900">Before</h3>
-                <div class="max-h-96 overflow-auto rounded-lg border border-gray-200 bg-gray-50 p-4">
-                  <pre class="text-xs">{JSON.stringify(changeData.before, null, 2)}</pre>
+                <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100">{$translations.before}</h3>
+                <div class="max-h-96 overflow-auto rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900">
+                  <pre class="text-xs dark:text-gray-100">{JSON.stringify(changeData.before, null, 2)}</pre>
                 </div>
               </div>
             {/if}
 
             {#if changeData.after}
               <div>
-                <h3 class="mb-2 text-lg font-semibold text-gray-900">After</h3>
-                <div class="max-h-96 overflow-auto rounded-lg border border-gray-200 bg-gray-50 p-4">
-                  <pre class="text-xs">{JSON.stringify(changeData.after, null, 2)}</pre>
+                <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100">{$translations.after}</h3>
+                <div class="max-h-96 overflow-auto rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900">
+                  <pre class="text-xs dark:text-gray-100">{JSON.stringify(changeData.after, null, 2)}</pre>
                 </div>
               </div>
             {/if}
           </div>
         {/if}
       {:else}
-        <div class="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-800">No detailed change data available for this entry.</div>
+        <div class="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-800">{$translations.noDetailedChangeData}</div>
       {/if}
 
       <div class="mt-6 flex justify-end">
-        <Button color="alternative" onclick={() => (showModal = false)}>Close</Button>
+        <Button color="alternative" onclick={() => (showModal = false)}>{$translations.close}</Button>
       </div>
     </div>
   </Modal>
