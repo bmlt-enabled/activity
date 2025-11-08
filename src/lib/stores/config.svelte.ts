@@ -30,7 +30,7 @@ function saveToStorage(data: ConfigData): void {
 class ConfigStore {
   #bmltServer = $state('');
   #serviceBodyIds = $state<string[]>([]);
-  #daysPassed = $state(180);
+  #daysPassed = $state(30);
   #timezone = $state('America/New_York');
 
   constructor() {
