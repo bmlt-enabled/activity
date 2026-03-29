@@ -15,15 +15,16 @@
     { value: 'es', name: 'Español' }
   ];
 
-  let selectedLanguage = $state(currentLanguage);
+  let pendingLanguage: string | null = $state(null);
 
   function handleSave() {
-    onLanguageChange(selectedLanguage);
+    onLanguageChange(pendingLanguage ?? currentLanguage);
+    pendingLanguage = null;
     open = false;
   }
 
   function handleCancel() {
-    selectedLanguage = currentLanguage;
+    pendingLanguage = null;
     open = false;
   }
 </script>
@@ -32,7 +33,7 @@
   <div class="space-y-6">
     <div>
       <Label for="language-select" class="mb-2">{$translations.language}</Label>
-      <Select id="language-select" items={languageOptions} bind:value={selectedLanguage} />
+      <Select id="language-select" items={languageOptions} value={pendingLanguage ?? currentLanguage} oninput={(e) => (pendingLanguage = (e.currentTarget as HTMLSelectElement).value)} />
     </div>
   </div>
 
