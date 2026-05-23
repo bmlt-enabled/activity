@@ -3,7 +3,7 @@ import type { BmltChange } from '../types';
 
 export async function fetchBmltChanges(server: string, serviceBodyIds: string[], daysPassed: number): Promise<BmltChange[]> {
   const client = new BmltClient({
-    rootServerURL: server
+    serverURL: server
   });
 
   const today = new Date();

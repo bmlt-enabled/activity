@@ -22,7 +22,7 @@ export async function fetchServerList(): Promise<BmltServer[]> {
 export async function fetchServiceBodies(serverUrl: string): Promise<ServiceBody[]> {
   try {
     const client = new BmltClient({
-      rootServerURL: serverUrl
+      serverURL: serverUrl
     });
 
     const serviceBodies = await client.getServiceBodies();

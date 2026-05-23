@@ -204,7 +204,7 @@ describe('serverList service', () => {
       await fetchServiceBodies('https://custom-server.com');
 
       expect(BmltClient).toHaveBeenCalledWith({
-        rootServerURL: 'https://custom-server.com'
+        serverURL: 'https://custom-server.com'
       });
     });
   });
